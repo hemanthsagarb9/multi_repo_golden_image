@@ -5,7 +5,7 @@ on:
     types: [main-update, component1-update]
     
 permissions:
-  write
+  contents: write  
   
 jobs:
   deploy:
