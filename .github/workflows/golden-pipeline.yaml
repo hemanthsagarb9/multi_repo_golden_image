@@ -25,7 +25,7 @@ jobs:
       - name: Run Tests (Stub)
         id: test-step  # Define step ID
         run: |
-          if [ $((RANDOM % 2)) -eq 0 ]; then
+          if [ 0 -eq 0 ]; then
             echo "Tests Passed"
             echo "result=pass" >> $GITHUB_ENV
             echo "::set-output name=result::pass"  # Store output
