@@ -3,7 +3,10 @@ name: Golden Image Pipeline
 on:
   repository_dispatch:
     types: [main-update, component1-update]
-
+    
+permissions:
+  write
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
