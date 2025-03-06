@@ -16,20 +16,25 @@ jobs:
   test:
     needs: deploy
     runs-on: ubuntu-latest
+    outputs:
+      test_result: ${{ steps.test-step.outputs.result }}  # Store test result as output
     steps:
       - name: Run Tests (Stub)
-        id: test
+        id: test-step  # Define step ID
         run: |
           if [ $((RANDOM % 2)) -eq 0 ]; then
             echo "Tests Passed"
             echo "result=pass" >> $GITHUB_ENV
+            echo "::set-output name=result::pass"  # Store output
           else
             echo "Tests Failed"
             echo "result=fail" >> $GITHUB_ENV
+            echo "::set-output name=result::fail"  # Store output
+          fi
 
   update-golden-state:
     needs: test
-    if: env.result == 'pass'
+    if: needs.test.outputs.test_result == 'pass'  # Reference the correct output
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -49,4 +54,3 @@ jobs:
           git add golden-state.json
           git commit -m "Updated golden state for ${{ github.event.client_payload.component }} to ${{ github.event.client_payload.version }}"
           git push origin main
-
