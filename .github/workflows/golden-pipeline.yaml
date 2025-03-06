@@ -1,0 +1,52 @@
+name: Golden Image Pipeline
+
+on:
+  repository_dispatch:
+    types: [main-update, component1-update]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy New Version (Stub)
+        run: echo "Deployed"
+
+  test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Tests (Stub)
+        id: test
+        run: |
+          if [ $((RANDOM % 2)) -eq 0 ]; then
+            echo "Tests Passed"
+            echo "result=pass" >> $GITHUB_ENV
+          else
+            echo "Tests Failed"
+            echo "result=fail" >> $GITHUB_ENV
+
+  update-golden-state:
+    needs: test
+    if: env.result == 'pass'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+
+      - name: Update Golden Image JSON
+        run: python update_state.py ${{ github.event.client_payload.component }} ${{ github.event.client_payload.version }}
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add golden-state.json
+          git commit -m "Updated golden state for ${{ github.event.client_payload.component }} to ${{ github.event.client_payload.version }}"
+          git push origin main
+
