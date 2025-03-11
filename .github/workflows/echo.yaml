@@ -18,4 +18,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Echo Input Parameter
-      run: echo $message
+      run: |
+        echo "The message is: ${{ github.event.inputs.message }}"
