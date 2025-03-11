@@ -1,0 +1,26 @@
+name: Reusable and Manual Workflow with Inputs
+
+on:
+  workflow_dispatch:  # Allows manual trigger with input
+    inputs:
+      environment:
+        description: "Select environment"
+        required: true
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+  workflow_call:  # Allows being called from another workflow
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        type: string
+
+jobs:
+  example_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name
