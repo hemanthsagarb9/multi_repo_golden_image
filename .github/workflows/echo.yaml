@@ -20,3 +20,4 @@ jobs:
     - name: Echo Input Parameter
       run: |
         echo "The message is: ${{ github.event.inputs.message }}"
+        echo "Input message from workflow_call: ${{ inputs.message }}"
