@@ -19,5 +19,6 @@ jobs:
     steps:
     - name: Echo Input Parameter
       run: |
+        echo "The event type  is: ${{ github.event_name }}"
         echo "The message is: ${{ github.event.inputs.message }}"
         echo "Input message from workflow_call: ${{ inputs.message }}"
