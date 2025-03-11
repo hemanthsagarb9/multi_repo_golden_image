@@ -5,6 +5,6 @@ on:
 
 jobs:
   call_echo_workflow:
-    uses: .github/workflows/echo.yaml
+    uses: hemanthsagarb9/multi_repo_golden_image/.github/workflows/echo.yaml@main
     with:
       message: "Hello from another workflow!"
