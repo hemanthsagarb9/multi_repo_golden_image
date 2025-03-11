@@ -1,0 +1,10 @@
+name: Call Echo Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call_echo_workflow:
+    uses: .github/workflows/echo.yaml
+    with:
+      message: "Hello from another workflow!"
