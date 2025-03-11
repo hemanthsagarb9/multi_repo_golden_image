@@ -1,26 +1,24 @@
-name: Reusable and Manual Workflow with Inputs
+name: Echo Input Workflow
 
 on:
-  workflow_dispatch:  # Allows manual trigger with input
+  workflow_dispatch:
     inputs:
-      environment:
-        description: "Select environment"
+      message:
+        description: "Enter a message to echo"
         required: true
-        default: "staging"
-        type: choice
-        options:
-          - staging
-          - production
+        default: "Hello from workflow_dispatch!"
+        type: string
 
-  workflow_call:  # Allows being called from another workflow
+  workflow_call:
     inputs:
-      environment:
-        description: "Deployment environment"
+      message:
+        description: "Message from caller workflow"
         required: true
         type: string
 
 jobs:
-  example_job:
+  echo_job:
     runs-on: ubuntu-latest
     steps:
-      - name
+      - name: Echo Input Parameter
+        run: echo "Input message: ${{ inputs.message }}"
