@@ -4,6 +4,9 @@ from pydantic import BaseModel
 import os
 import requests
 
+from presidio_analyzer import AnalyzerEngine
+from presidio_anonymizer import AnonymizerEngine
+from presidio_anonymizer.entities import OperatorConfig
 
 class Pipeline:
     class Valves(BaseModel):
@@ -24,7 +27,32 @@ class Pipeline:
                 )
             }
         )
+        self.entities_to_redact: List[str] = [
+            "PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "US_SSN",
+            "CREDIT_CARD", "IP_ADDRESS", "US_PASSPORT", "LOCATION",
+            "DATE_TIME", "NRP", "MEDICAL_LICENSE", "URL"
+        ]
+        self.analyzer = AnalyzerEngine()
+        self.anonymizer = AnonymizerEngine()
+        self.language = "en"
         pass
+
+    def redact_pii(self, text: str) -> str:
+        results = self.analyzer.analyze(
+            text=text,
+            language=self.language,
+            entities=self.entities_to_redact
+        )
+
+        anonymized_text = self.anonymizer.anonymize(
+            text=text,
+            analyzer_results=results,
+            operators={
+                "DEFAULT": OperatorConfig("replace", {"new_value": "[REDACTED]"})
+            }
+        )
+
+        return anonymized_text.text
 
     async def on_startup(self):
         # This function is called when the server is started.
@@ -43,7 +71,10 @@ class Pipeline:
         print(f"pipe:{__name__}")
 
         print(messages)
-        print(user_message)
+        print("USER MESSAGE:", user_message)
+        print("AFTER REDACTION:", self.redact_pii(user_message))
+        print("BODY")
+        print(body)
 
         OPENAI_API_KEY = self.valves.OPENAI_API_KEY
         MODEL = "gpt-3.5-turbo"
